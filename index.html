@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TipS!!!</title>
+  <title>TipS!!</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       background-color: #f7f9fb;
       color: #333;
-      padding: 16px;
+      padding: 12px;
       display: flex;
       justify-content: center;
     }
@@ -18,12 +18,12 @@
       width: 100%;
       max-width: 680px;
       background: #ffffff;
-      padding: 24px;
+      padding: 18px;
       border-radius: 12px;
       box-shadow: 0 4px 16px rgba(0,0,0,0.06);
     }
     
-    /* 상단 헤더 & 검색 */
+    /* 상단 헤더 & 검색창 */
     .header-row {
       display: flex;
       align-items: center;
@@ -36,10 +36,11 @@
       font-weight: 900;
       color: #1a73e8;
       letter-spacing: -0.5px;
+      white-space: nowrap;
     }
     .search-input {
       flex: 1;
-      padding: 10px 14px;
+      padding: 9px 12px;
       font-size: 15px;
       border: 2px solid #e0e0e0;
       border-radius: 8px;
@@ -50,38 +51,13 @@
       border-color: #1a73e8;
     }
 
-    /* 카테고리 태그 바 */
-    .category-scroll {
-      display: flex;
-      gap: 8px;
-      overflow-x: auto;
-      padding-bottom: 8px;
-      margin-bottom: 20px;
-    }
-    .cat-btn {
-      padding: 7px 14px;
-      border: 1px solid #dcdcdc;
-      border-radius: 20px;
-      background-color: #fff;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      white-space: nowrap;
-      color: #555;
-    }
-    .cat-btn.active {
-      background-color: #1a73e8;
-      color: #fff;
-      border-color: #1a73e8;
-    }
-
     /* 입력 폼 박스 */
     .form-box {
       background: #fbfcfe;
       border: 1px solid #e2e8f0;
       border-radius: 10px;
       padding: 16px;
-      margin-bottom: 24px;
+      margin-bottom: 16px;
     }
     .form-group {
       margin-bottom: 12px;
@@ -106,7 +82,7 @@
     }
     textarea.form-control {
       resize: vertical;
-      min-height: 100px;
+      min-height: 90px;
       font-family: inherit;
     }
     .submit-btn {
@@ -124,166 +100,263 @@
       background-color: #94a3b8;
     }
 
-    /* 목록 및 검색결과 영역 */
+    /* 카테고리 필터 바 (시트에 보관하기 밑으로 이동) */
+    .category-scroll {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 6px 0 12px 0;
+      margin-bottom: 10px;
+    }
+    .cat-btn {
+      padding: 6px 14px;
+      border: 1px solid #dcdcdc;
+      border-radius: 20px;
+      background-color: #fff;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      color: #555;
+    }
+    .cat-btn.active {
+      background-color: #1a73e8;
+      color: #fff;
+      border-color: #1a73e8;
+    }
+
+    /* 목록 영역 상단 */
     .section-title {
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 700;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
       color: #475569;
       display: flex;
       justify-content: space-between;
+      align-items: center;
     }
-    
-    /* 기본 리스트 뷰 (1페이지 하단) */
+
+    /* 1. 카테고리 폴더 뷰 (기본 화면) */
+    .folder-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 10px;
+    }
+    .folder-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 14px 10px;
+      text-align: center;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+    }
+    .folder-card:active {
+      background: #e8f0fe;
+      transform: scale(0.98);
+    }
+    .folder-name {
+      font-size: 14px;
+      font-weight: bold;
+      color: #1e293b;
+      margin-bottom: 4px;
+    }
+    .folder-count {
+      font-size: 12px;
+      color: #64748b;
+    }
+
+    /* 2. 항목 리스트 뷰 */
     .simple-list {
       list-style: none;
     }
     .simple-item {
-      padding: 10px 4px;
+      padding: 12px 6px;
       border-bottom: 1px solid #edf2f7;
       font-size: 14px;
       cursor: pointer;
+      display: flex;
+      align-items: baseline;
     }
-    .simple-item:hover {
-      background-color: #f8fafc;
+    .simple-item:active {
+      background-color: #f1f5f9;
     }
     .simple-tag {
-      display: inline-block;
       font-weight: bold;
       color: #1a73e8;
-      margin-right: 6px;
+      margin-right: 8px;
+      white-space: nowrap;
+    }
+    .simple-title {
+      color: #334155;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
-    /* 검색 및 카드 뷰 (2페이지 스타일) */
-    .card-list {
+    /* 상세 모달 팝업 */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+    }
+    .modal-box {
+      background: #fff;
+      width: 100%;
+      max-width: 520px;
+      border-radius: 12px;
+      padding: 20px;
+      max-height: 85vh;
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
     }
-    .card {
-      border: 1px solid #e2e8f0;
-      border-radius: 8px;
-      padding: 14px;
-      background: #fff;
-    }
-    .card-header {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 6px;
-    }
-    .card-category {
+    .modal-tag {
       font-size: 12px;
       font-weight: bold;
-      background: #e8f0fe;
       color: #1a73e8;
-      padding: 2px 8px;
+      background: #e8f0fe;
+      padding: 3px 8px;
       border-radius: 4px;
+      display: inline-block;
+      width: fit-content;
+      margin-bottom: 8px;
     }
-    .card-title {
-      font-size: 16px;
+    .modal-title {
+      font-size: 17px;
       font-weight: bold;
-      margin-bottom: 6px;
       color: #1e293b;
+      margin-bottom: 8px;
     }
-    .card-url {
-      font-size: 12px;
+    .modal-link {
+      font-size: 13px;
       color: #0284c7;
       word-break: break-all;
-      margin-bottom: 8px;
-      text-decoration: none;
+      margin-bottom: 12px;
+      text-decoration: underline;
       display: inline-block;
     }
-    .card-content {
-      font-size: 13.5px;
+    .modal-content {
+      font-size: 14px;
       color: #475569;
-      line-height: 1.5;
+      line-height: 1.6;
       white-space: pre-wrap;
       word-break: break-word;
+      overflow-y: auto;
+      flex: 1;
+      padding: 10px 0;
+      border-top: 1px solid #f1f5f9;
+      border-bottom: 1px solid #f1f5f9;
+      margin-bottom: 14px;
     }
-    .more-btn {
-      color: #1a73e8;
-      background: none;
-      border: none;
-      font-size: 12px;
-      cursor: pointer;
+    .modal-actions {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+    .btn-action {
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-size: 13px;
       font-weight: bold;
-      margin-top: 4px;
-      display: inline-block;
+      cursor: pointer;
+      border: none;
     }
+    .btn-edit { background: #f1f5f9; color: #334155; }
+    .btn-delete { background: #fee2e2; color: #dc2626; }
+    .btn-close { background: #1a73e8; color: #fff; }
   </style>
 </head>
 <body>
 
 <div class="app-container">
+  <!-- 상단 헤더: placeholder 제거 -->
   <div class="header-row">
     <div class="logo">TipS!!</div>
-    <input type="text" id="searchInput" class="search-input" placeholder="검색어를 입력하세요 (내용, 제목 등)">
+    <input type="text" id="searchInput" class="search-input">
   </div>
 
-  <div class="category-scroll" id="categoryFilter">
-    <button class="cat-btn active" data-cat="ALL">전체</button>
-    <button class="cat-btn" data-cat="A.I.">A.I.</button>
-    <button class="cat-btn" data-cat="포토">포토</button>
-    <button class="cat-btn" data-cat="영상">영상</button>
-    <button class="cat-btn" data-cat="오디오">오디오</button>
-    <button class="cat-btn" data-cat="유튜브">유튜브</button>
-  </div>
-
+  <!-- 입력 폼 -->
   <div class="form-box" id="inputFormBox">
     <div class="form-group">
-      <label>카테고리 선택</label>
-      <select id="inputCategory" class="form-control">
-        <option value="A.I.">A.I.</option>
-        <option value="포토">포토</option>
-        <option value="영상">영상</option>
-        <option value="오디오">오디오</option>
-        <option value="유튜브">유튜브</option>
-        <option value="기타">기타</option>
-      </select>
+      <label>카테고리 (선택 또는 직접입력)</label>
+      <input type="text" id="inputCategory" list="categoryDatalist" class="form-control" placeholder="예: A.I., 포토, 영상 등">
+      <datalist id="categoryDatalist">
+        <option value="A.I.">
+        <option value="포토">
+        <option value="영상">
+        <option value="오디오">
+        <option value="유튜브">
+        <option value="기타">
+      </datalist>
     </div>
     <div class="form-group">
       <label>내용 제목</label>
-      <input type="text" id="inputTitle" class="form-control" placeholder="예: 동영상 프롬포트 작성법">
+      <input type="text" id="inputTitle" class="form-control">
     </div>
     <div class="form-group">
       <label>URL</label>
-      <input type="url" id="inputUrl" class="form-control" placeholder="SNS 주소 또는 웹 링크">
+      <input type="url" id="inputUrl" class="form-control">
     </div>
     <div class="form-group">
       <label>내용</label>
-      <textarea id="inputContent" class="form-control" placeholder="프롬프트 또는 본문 내용을 붙여넣으세요"></textarea>
+      <textarea id="inputContent" class="form-control"></textarea>
     </div>
     <button type="button" class="submit-btn" id="saveBtn" onclick="saveTip()">시트에 보관하기</button>
   </div>
 
+  <!-- 카테고리 태그 바 (위치 이동) -->
+  <div class="category-scroll" id="categoryFilter">
+    <button class="cat-btn active" onclick="setCategory('ALL')">전체</button>
+  </div>
+
   <div class="section-title">
-    <span id="viewTitle">최근 보관 목록</span>
+    <span id="viewTitle">카테고리 모아보기</span>
     <span id="countText" style="font-size:12px; color:#888;"></span>
   </div>
 
-  <div id="displayArea">
+  <!-- 목록 노출 영역 -->
+  <div id="displayArea"></div>
+</div>
+
+<!-- 상세 모달창 -->
+<div class="modal-overlay" id="detailModal">
+  <div class="modal-box">
+    <span class="modal-tag" id="modalCategory"></span>
+    <div class="modal-title" id="modalTitle"></div>
+    <div id="modalUrlWrapper"></div>
+    <div class="modal-content" id="modalContent"></div>
+    <div class="modal-actions">
+      <button class="btn-action btn-edit" onclick="editCurrentTip()">수정</button>
+      <button class="btn-action btn-delete" onclick="deleteCurrentTip()">삭제</button>
+      <button class="btn-action btn-close" onclick="closeModal()">확인</button>
     </div>
+  </div>
 </div>
 
 <script>
-  // 1단계에서 복사한 Google Apps Script 웹 앱 URL을 여기에 넣으세요
   const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzJlo_X5N-vui1jrGeAD_6Z9oy6jS04c86k2exV7ivSvt8cCEph6h_wlwscsPRIho5t/exec";
 
   let tipsData = [];
   let currentCategory = "ALL";
   let searchQuery = "";
+  let selectedTipIndex = null;
 
-  // 데이터 로드 (CORS 회피용 JSONP 방식)
   function loadData() {
     const displayArea = document.getElementById("displayArea");
     displayArea.innerHTML = "<p style='color:#888; text-align:center; padding:20px;'>데이터 불러오는 중...</p>";
 
-    // 이전 jsonp 스크립트 제거
     const oldScript = document.getElementById("jsonp_loader");
     if (oldScript) oldScript.remove();
 
     window.handleData = function(data) {
       tipsData = data;
+      buildCategoryList();
       render();
     };
 
@@ -293,9 +366,42 @@
     document.body.appendChild(script);
   }
 
-  // 데이터 저장
+  // 데이터 기반 동적 카테고리 생성 (필터 버튼 & datalist)
+  function buildCategoryList() {
+    const rawCategories = tipsData.map(item => item.category ? item.category.trim() : "").filter(Boolean);
+    const uniqueCategories = Array.from(new Set(rawCategories));
+
+    // 필터 버튼 생성
+    const catContainer = document.getElementById("categoryFilter");
+    catContainer.innerHTML = `<button class="cat-btn ${currentCategory === 'ALL' ? 'active' : ''}" onclick="setCategory('ALL')">전체</button>`;
+    
+    // datalist 초기화
+    const dataList = document.getElementById("categoryDatalist");
+    dataList.innerHTML = "";
+
+    uniqueCategories.forEach(cat => {
+      const btn = document.createElement("button");
+      btn.className = `cat-btn ${currentCategory === cat ? 'active' : ''}`;
+      btn.innerText = cat;
+      btn.onclick = () => setCategory(cat);
+      catContainer.appendChild(btn);
+
+      const opt = document.createElement("option");
+      opt.value = cat;
+      dataList.appendChild(opt);
+    });
+  }
+
+  function setCategory(cat) {
+    currentCategory = cat;
+    document.querySelectorAll(".cat-btn").forEach(btn => {
+      btn.classList.toggle("active", btn.innerText === (cat === 'ALL' ? '전체' : cat));
+    });
+    render();
+  }
+
   async function saveTip() {
-    const category = document.getElementById("inputCategory").value;
+    const category = document.getElementById("inputCategory").value.trim() || "기타";
     const title = document.getElementById("inputTitle").value.trim();
     const url = document.getElementById("inputUrl").value.trim();
     const content = document.getElementById("inputContent").value.trim();
@@ -318,11 +424,10 @@
       });
 
       alert("성공적으로 보관되었습니다!");
+      document.getElementById("inputCategory").value = "";
       document.getElementById("inputTitle").value = "";
       document.getElementById("inputUrl").value = "";
       document.getElementById("inputContent").value = "";
-
-      // 재조회
       loadData();
     } catch (e) {
       alert("저장 실패: " + e.message);
@@ -332,120 +437,148 @@
     }
   }
 
-  // 필터링 & 화면 렌더링
   function render() {
     const displayArea = document.getElementById("displayArea");
     const viewTitle = document.getElementById("viewTitle");
     const countText = document.getElementById("countText");
 
-    // 필터 조건 처리
+    const q = searchQuery.toLowerCase().trim();
+    const isSearching = q.length > 0;
+    const isCategorySelected = currentCategory !== "ALL";
+
+    // 1. 전체 상태이고 검색어가 없을 때 -> '카테고리 폴더 카드'만 표시
+    if (!isSearching && !isCategorySelected) {
+      viewTitle.innerText = "카테고리별 모아보기";
+      countText.innerText = `총 ${tipsData.length}건`;
+
+      if (tipsData.length === 0) {
+        displayArea.innerHTML = "<p style='color:#999; text-align:center; padding:20px;'>저장된 팁이 없습니다.</p>";
+        return;
+      }
+
+      // 카테고리별 건수 계산
+      const counts = {};
+      tipsData.forEach(item => {
+        const cat = item.category ? item.category.trim() : "기타";
+        counts[cat] = (counts[cat] || 0) + 1;
+      });
+
+      let html = `<div class="folder-grid">`;
+      for (const [catName, count] of Object.entries(counts)) {
+        html += `
+          <div class="folder-card" onclick="setCategory('${escapeHtml(catName)}')">
+            <div class="folder-name">${escapeHtml(catName)}</div>
+            <div class="folder-count">${count}개 항목</div>
+          </div>
+        `;
+      }
+      html += `</div>`;
+      displayArea.innerHTML = html;
+      return;
+    }
+
+    // 2. 카테고리를 눌렀거나 검색어를 입력했을 때 -> 해당 항목 리스트 표시
     let filtered = tipsData.filter(item => {
       const matchCat = (currentCategory === "ALL" || item.category === currentCategory);
-      const q = searchQuery.toLowerCase();
       const matchSearch = (!q || 
-        item.title.toLowerCase().includes(q) || 
-        item.content.toLowerCase().includes(q) ||
-        item.category.toLowerCase().includes(q)
+        (item.title && item.title.toLowerCase().includes(q)) || 
+        (item.content && item.content.toLowerCase().includes(q)) ||
+        (item.category && item.category.toLowerCase().includes(q))
       );
       return matchCat && matchSearch;
     });
 
+    viewTitle.innerText = isSearching ? "검색 결과" : `[${currentCategory}] 목록`;
     countText.innerText = `${filtered.length}건`;
 
     if (filtered.length === 0) {
-      displayArea.innerHTML = "<p style='color:#999; text-align:center; padding:30px;'>저장된 팁이 없습니다.</p>";
+      displayArea.innerHTML = "<p style='color:#999; text-align:center; padding:20px;'>검색 결과가 없습니다.</p>";
       return;
     }
 
-    // 검색어나 카테고리 필터가 걸려있으면 카드 상세형(두 번째 스케치), 기본 상태면 텍스트 리스트형
-    const isSearchMode = searchQuery.trim().length > 0 || currentCategory !== "ALL";
-
-    if (!isSearchMode) {
-      // 1페이지 하단: 단순 리스트형
-      viewTitle.innerText = "최근 보관 목록";
-      let html = `<ul class="simple-list">`;
-      filtered.forEach((item, index) => {
-        html += `
-          <li class="simple-item" onclick="showDetailModal(${index})">
-            <span class="simple-tag">[${item.category}]</span> ${escapeHtml(item.title)}
-          </li>
-        `;
-      });
-      html += `</ul>`;
-      displayArea.innerHTML = html;
-    } else {
-      // 2페이지: 카드 박스형 (300자 더보기 처리)
-      viewTitle.innerText = "검색 결과";
-      let html = `<div class="card-list">`;
-      filtered.forEach(item => {
-        const isLong = item.content.length > 300;
-        const shortText = isLong ? item.content.substring(0, 300) + "..." : item.content;
-        
-        html += `
-          <div class="card">
-            <div class="card-header">
-              <span class="card-category">${escapeHtml(item.category)}</span>
-              <span style="font-size:11px; color:#999;">${item.date || ''}</span>
-            </div>
-            <div class="card-title">${escapeHtml(item.title)}</div>
-            ${item.url ? `<a href="${item.url}" target="_blank" class="card-url">🔗 ${escapeHtml(item.url)}</a>` : ''}
-            <div class="card-content" id="content_${item.id}">${escapeHtml(shortText)}</div>
-            ${isLong ? `<button class="more-btn" onclick="toggleMore('${item.id}', ${JSON.stringify(item.content).replace(/"/g, '&quot;')})">더보기</button>` : ''}
-          </div>
-        `;
-      });
-      html += `</div>`;
-      displayArea.innerHTML = html;
-    }
+    let html = `<ul class="simple-list">`;
+    filtered.forEach(item => {
+      const originalIndex = tipsData.indexOf(item);
+      html += `
+        <li class="simple-item" onclick="openDetail(${originalIndex})">
+          <span class="simple-tag">[${escapeHtml(item.category)}]</span>
+          <span class="simple-title">${escapeHtml(item.title)}</span>
+        </li>
+      `;
+    });
+    html += `</ul>`;
+    displayArea.innerHTML = html;
   }
 
-  // 더보기 토글
-  function toggleMore(id, fullContent) {
-    const el = document.getElementById("content_" + id);
-    const btn = event.target;
-    if (btn.innerText === "더보기") {
-      el.innerText = fullContent;
-      btn.innerText = "접기";
-    } else {
-      el.innerText = fullContent.substring(0, 300) + "...";
-      btn.innerText = "더보기";
-    }
-  }
-
-  // 1페이지 단순 리스트 클릭 시 내용 확인 알림
-  function showDetailModal(index) {
+  // 상세 모달 열기
+  function openDetail(index) {
+    selectedTipIndex = index;
     const item = tipsData[index];
-    alert(`[${item.category}] ${item.title}\n\n${item.content}\n\nURL: ${item.url || '없음'}`);
+
+    document.getElementById("modalCategory").innerText = item.category || "기타";
+    document.getElementById("modalTitle").innerText = item.title;
+    
+    // URL 바로가기 링크 활성화
+    const urlContainer = document.getElementById("modalUrlWrapper");
+    if (item.url && item.url.trim()) {
+      let href = item.url.trim();
+      if (!href.startsWith("http://") && !href.startsWith("https://")) {
+        href = "https://" + href;
+      }
+      urlContainer.innerHTML = `<a href="${href}" target="_blank" rel="noopener noreferrer" class="modal-link">🔗 ${escapeHtml(item.url)}</a>`;
+    } else {
+      urlContainer.innerHTML = "";
+    }
+
+    document.getElementById("modalContent").innerText = item.content;
+    document.getElementById("detailModal").style.display = "flex";
+  }
+
+  function closeModal() {
+    document.getElementById("detailModal").style.display = "none";
+    selectedTipIndex = null;
+  }
+
+  // 수정: 기존 내용을 상단 입력 폼으로 불러옴
+  function editCurrentTip() {
+    if (selectedTipIndex === null) return;
+    const item = tipsData[selectedTipIndex];
+
+    document.getElementById("inputCategory").value = item.category || "";
+    document.getElementById("inputTitle").value = item.title || "";
+    document.getElementById("inputUrl").value = item.url || "";
+    document.getElementById("inputContent").value = item.content || "";
+
+    closeModal();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    document.getElementById("inputTitle").focus();
+  }
+
+  // 삭제 알림 및 처리 안내
+  function deleteCurrentTip() {
+    if (selectedTipIndex === null) return;
+    const item = tipsData[selectedTipIndex];
+
+    if (confirm(`'${item.title}' 항목을 삭제하시겠습니까?\n\n(참고: 현재 웹 앱 권한 설정상 안전을 위해 구글 시트에서 직접 행을 삭제하셔도 새로고침 시 바로 반영됩니다.)`)) {
+      tipsData.splice(selectedTipIndex, 1);
+      closeModal();
+      buildCategoryList();
+      render();
+    }
   }
 
   function escapeHtml(str) {
     if (!str) return '';
-    return str.replace(/[&<>'"]/g, 
-      tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
-    );
+    return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
   }
 
-  // 검색창 이벤트
   document.getElementById("searchInput").addEventListener("input", (e) => {
     searchQuery = e.target.value;
     render();
   });
 
-  // 상단 카테고리 탭 클릭 이벤트
-  document.querySelectorAll(".cat-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-      document.querySelectorAll(".cat-btn").forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
-      currentCategory = btn.dataset.cat;
-      render();
-    });
-  });
-
-  // 초기 실행
   window.onload = () => {
-    if (GOOGLE_APPS_SCRIPT_URL && !GOOGLE_APPS_SCRIPT_URL.includes("여기에")) {
-      loadData();
-    }
+    if (GOOGLE_APPS_SCRIPT_URL) loadData();
   };
 </script>
 
