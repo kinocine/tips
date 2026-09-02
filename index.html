@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TipS!!!</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: #f7f9fb;
+      color: #333;
+      padding: 16px;
+      display: flex;
+      justify-content: center;
+    }
+    .app-container {
+      width: 100%;
+      max-width: 680px;
+      background: #ffffff;
+      padding: 24px;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+    }
+    
+    /* 상단 헤더 & 검색 */
+    .header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .logo {
+      font-size: 26px;
+      font-weight: 900;
+      color: #1a73e8;
+      letter-spacing: -0.5px;
+    }
+    .search-input {
+      flex: 1;
+      padding: 10px 14px;
+      font-size: 15px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .search-input:focus {
+      border-color: #1a73e8;
+    }
+
+    /* 카테고리 태그 바 */
+    .category-scroll {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      margin-bottom: 20px;
+    }
+    .cat-btn {
+      padding: 7px 14px;
+      border: 1px solid #dcdcdc;
+      border-radius: 20px;
+      background-color: #fff;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      color: #555;
+    }
+    .cat-btn.active {
+      background-color: #1a73e8;
+      color: #fff;
+      border-color: #1a73e8;
+    }
+
+    /* 입력 폼 박스 */
+    .form-box {
+      background: #fbfcfe;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 24px;
+    }
+    .form-group {
+      margin-bottom: 12px;
+    }
+    .form-group label {
+      display: block;
+      font-size: 12px;
+      font-weight: bold;
+      color: #666;
+      margin-bottom: 4px;
+    }
+    .form-control {
+      width: 100%;
+      padding: 9px 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      font-size: 14px;
+      outline: none;
+    }
+    .form-control:focus {
+      border-color: #1a73e8;
+    }
+    textarea.form-control {
+      resize: vertical;
+      min-height: 100px;
+      font-family: inherit;
+    }
+    .submit-btn {
+      width: 100%;
+      padding: 12px;
+      background-color: #1a73e8;
+      color: white;
+      font-size: 15px;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .submit-btn:disabled {
+      background-color: #94a3b8;
+    }
+
+    /* 목록 및 검색결과 영역 */
+    .section-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: #475569;
+      display: flex;
+      justify-content: space-between;
+    }
+    
+    /* 기본 리스트 뷰 (1페이지 하단) */
+    .simple-list {
+      list-style: none;
+    }
+    .simple-item {
+      padding: 10px 4px;
+      border-bottom: 1px solid #edf2f7;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .simple-item:hover {
+      background-color: #f8fafc;
+    }
+    .simple-tag {
+      display: inline-block;
+      font-weight: bold;
+      color: #1a73e8;
+      margin-right: 6px;
+    }
+
+    /* 검색 및 카드 뷰 (2페이지 스타일) */
+    .card-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .card {
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 14px;
+      background: #fff;
+    }
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+    .card-category {
+      font-size: 12px;
+      font-weight: bold;
+      background: #e8f0fe;
+      color: #1a73e8;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+    .card-title {
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 6px;
+      color: #1e293b;
+    }
+    .card-url {
+      font-size: 12px;
+      color: #0284c7;
+      word-break: break-all;
+      margin-bottom: 8px;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .card-content {
+      font-size: 13.5px;
+      color: #475569;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .more-btn {
+      color: #1a73e8;
+      background: none;
+      border: none;
+      font-size: 12px;
+      cursor: pointer;
+      font-weight: bold;
+      margin-top: 4px;
+      display: inline-block;
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-container">
+  <div class="header-row">
+    <div class="logo">TipS!!</div>
+    <input type="text" id="searchInput" class="search-input" placeholder="검색어를 입력하세요 (내용, 제목 등)">
+  </div>
+
+  <div class="category-scroll" id="categoryFilter">
+    <button class="cat-btn active" data-cat="ALL">전체</button>
+    <button class="cat-btn" data-cat="A.I.">A.I.</button>
+    <button class="cat-btn" data-cat="포토">포토</button>
+    <button class="cat-btn" data-cat="영상">영상</button>
+    <button class="cat-btn" data-cat="오디오">오디오</button>
+    <button class="cat-btn" data-cat="유튜브">유튜브</button>
+  </div>
+
+  <div class="form-box" id="inputFormBox">
+    <div class="form-group">
+      <label>카테고리 선택</label>
+      <select id="inputCategory" class="form-control">
+        <option value="A.I.">A.I.</option>
+        <option value="포토">포토</option>
+        <option value="영상">영상</option>
+        <option value="오디오">오디오</option>
+        <option value="유튜브">유튜브</option>
+        <option value="기타">기타</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>내용 제목</label>
+      <input type="text" id="inputTitle" class="form-control" placeholder="예: 동영상 프롬포트 작성법">
+    </div>
+    <div class="form-group">
+      <label>URL</label>
+      <input type="url" id="inputUrl" class="form-control" placeholder="SNS 주소 또는 웹 링크">
+    </div>
+    <div class="form-group">
+      <label>내용</label>
+      <textarea id="inputContent" class="form-control" placeholder="프롬프트 또는 본문 내용을 붙여넣으세요"></textarea>
+    </div>
+    <button type="button" class="submit-btn" id="saveBtn" onclick="saveTip()">시트에 보관하기</button>
+  </div>
+
+  <div class="section-title">
+    <span id="viewTitle">최근 보관 목록</span>
+    <span id="countText" style="font-size:12px; color:#888;"></span>
+  </div>
+
+  <div id="displayArea">
+    </div>
+</div>
+
+<script>
+  // 1단계에서 복사한 Google Apps Script 웹 앱 URL을 여기에 넣으세요
+  const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzJlo_X5N-vui1jrGeAD_6Z9oy6jS04c86k2exV7ivSvt8cCEph6h_wlwscsPRIho5t/exec";
+
+  let tipsData = [];
+  let currentCategory = "ALL";
+  let searchQuery = "";
+
+  // 데이터 로드 (CORS 회피용 JSONP 방식)
+  function loadData() {
+    const displayArea = document.getElementById("displayArea");
+    displayArea.innerHTML = "<p style='color:#888; text-align:center; padding:20px;'>데이터 불러오는 중...</p>";
+
+    // 이전 jsonp 스크립트 제거
+    const oldScript = document.getElementById("jsonp_loader");
+    if (oldScript) oldScript.remove();
+
+    window.handleData = function(data) {
+      tipsData = data;
+      render();
+    };
+
+    const script = document.createElement("script");
+    script.id = "jsonp_loader";
+    script.src = `${GOOGLE_APPS_SCRIPT_URL}?action=read&callback=handleData&t=${new Date().getTime()}`;
+    document.body.appendChild(script);
+  }
+
+  // 데이터 저장
+  async function saveTip() {
+    const category = document.getElementById("inputCategory").value;
+    const title = document.getElementById("inputTitle").value.trim();
+    const url = document.getElementById("inputUrl").value.trim();
+    const content = document.getElementById("inputContent").value.trim();
+
+    if (!title || !content) {
+      alert("제목과 내용을 입력해 주세요.");
+      return;
+    }
+
+    const saveBtn = document.getElementById("saveBtn");
+    saveBtn.disabled = true;
+    saveBtn.innerText = "저장 중...";
+
+    try {
+      await fetch(GOOGLE_APPS_SCRIPT_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ category, title, url, content })
+      });
+
+      alert("성공적으로 보관되었습니다!");
+      document.getElementById("inputTitle").value = "";
+      document.getElementById("inputUrl").value = "";
+      document.getElementById("inputContent").value = "";
+
+      // 재조회
+      loadData();
+    } catch (e) {
+      alert("저장 실패: " + e.message);
+    } finally {
+      saveBtn.disabled = false;
+      saveBtn.innerText = "시트에 보관하기";
+    }
+  }
+
+  // 필터링 & 화면 렌더링
+  function render() {
+    const displayArea = document.getElementById("displayArea");
+    const viewTitle = document.getElementById("viewTitle");
+    const countText = document.getElementById("countText");
+
+    // 필터 조건 처리
+    let filtered = tipsData.filter(item => {
+      const matchCat = (currentCategory === "ALL" || item.category === currentCategory);
+      const q = searchQuery.toLowerCase();
+      const matchSearch = (!q || 
+        item.title.toLowerCase().includes(q) || 
+        item.content.toLowerCase().includes(q) ||
+        item.category.toLowerCase().includes(q)
+      );
+      return matchCat && matchSearch;
+    });
+
+    countText.innerText = `${filtered.length}건`;
+
+    if (filtered.length === 0) {
+      displayArea.innerHTML = "<p style='color:#999; text-align:center; padding:30px;'>저장된 팁이 없습니다.</p>";
+      return;
+    }
+
+    // 검색어나 카테고리 필터가 걸려있으면 카드 상세형(두 번째 스케치), 기본 상태면 텍스트 리스트형
+    const isSearchMode = searchQuery.trim().length > 0 || currentCategory !== "ALL";
+
+    if (!isSearchMode) {
+      // 1페이지 하단: 단순 리스트형
+      viewTitle.innerText = "최근 보관 목록";
+      let html = `<ul class="simple-list">`;
+      filtered.forEach((item, index) => {
+        html += `
+          <li class="simple-item" onclick="showDetailModal(${index})">
+            <span class="simple-tag">[${item.category}]</span> ${escapeHtml(item.title)}
+          </li>
+        `;
+      });
+      html += `</ul>`;
+      displayArea.innerHTML = html;
+    } else {
+      // 2페이지: 카드 박스형 (300자 더보기 처리)
+      viewTitle.innerText = "검색 결과";
+      let html = `<div class="card-list">`;
+      filtered.forEach(item => {
+        const isLong = item.content.length > 300;
+        const shortText = isLong ? item.content.substring(0, 300) + "..." : item.content;
+        
+        html += `
+          <div class="card">
+            <div class="card-header">
+              <span class="card-category">${escapeHtml(item.category)}</span>
+              <span style="font-size:11px; color:#999;">${item.date || ''}</span>
+            </div>
+            <div class="card-title">${escapeHtml(item.title)}</div>
+            ${item.url ? `<a href="${item.url}" target="_blank" class="card-url">🔗 ${escapeHtml(item.url)}</a>` : ''}
+            <div class="card-content" id="content_${item.id}">${escapeHtml(shortText)}</div>
+            ${isLong ? `<button class="more-btn" onclick="toggleMore('${item.id}', ${JSON.stringify(item.content).replace(/"/g, '&quot;')})">더보기</button>` : ''}
+          </div>
+        `;
+      });
+      html += `</div>`;
+      displayArea.innerHTML = html;
+    }
+  }
+
+  // 더보기 토글
+  function toggleMore(id, fullContent) {
+    const el = document.getElementById("content_" + id);
+    const btn = event.target;
+    if (btn.innerText === "더보기") {
+      el.innerText = fullContent;
+      btn.innerText = "접기";
+    } else {
+      el.innerText = fullContent.substring(0, 300) + "...";
+      btn.innerText = "더보기";
+    }
+  }
+
+  // 1페이지 단순 리스트 클릭 시 내용 확인 알림
+  function showDetailModal(index) {
+    const item = tipsData[index];
+    alert(`[${item.category}] ${item.title}\n\n${item.content}\n\nURL: ${item.url || '없음'}`);
+  }
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>'"]/g, 
+      tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
+    );
+  }
+
+  // 검색창 이벤트
+  document.getElementById("searchInput").addEventListener("input", (e) => {
+    searchQuery = e.target.value;
+    render();
+  });
+
+  // 상단 카테고리 탭 클릭 이벤트
+  document.querySelectorAll(".cat-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".cat-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      currentCategory = btn.dataset.cat;
+      render();
+    });
+  });
+
+  // 초기 실행
+  window.onload = () => {
+    if (GOOGLE_APPS_SCRIPT_URL && !GOOGLE_APPS_SCRIPT_URL.includes("여기에")) {
+      loadData();
+    }
+  };
+</script>
+
+</body>
+</html>
